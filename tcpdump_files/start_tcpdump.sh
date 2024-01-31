@@ -4,5 +4,5 @@ adb shell whoami
 adb remount
 adb push /Users/batu/Desktop/project_dal/tcpdump /system/xbin/tcpdump
 adb shell chmod 6755 /system/xbin/tcpdump
-sudo tcpdump -i any -s 0 -w /Users/batu/Desktop/project_dal/tcpdump_files/slack.pcap
+sudo tcpdump -i any -s 0 -w /Users/batu/Desktop/project_dal/slack.pcap
 

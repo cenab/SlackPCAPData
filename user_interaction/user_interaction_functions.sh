@@ -17,7 +17,17 @@ openGeneralChatFromHomeScreen () {
     sleep 2;
 
     adb shell input tap 80 220;
+
     sleep 2;
+    
+    adb shell input tap 80 220;
+
+    sleep 2;
+
+    adb shell input tap 80 220;
+
+    sleep 2;
+
     adb shell input tap 80 220;
 
     
@@ -43,19 +53,35 @@ openGeneralChatFromHomeScreen () {
 }
 
 postMessageToTheChat() {
+
+    KEYBOARD_STATUS=$(adb shell dumpsys input_method | grep "mInputShown" | awk '{print $NF}')
+
+    if [ "$KEYBOARD_STATUS" = "true" ]; then
+        adb shell input keyevent KEYCODE_BACK
+    else
+        echo "Keyboard is not shown."
+    fi
+
     local message="${1// /%s}"  # Replaces all spaces with '%s'
 
+    sleep 1;
     # Clicks on the text box
     adb shell input tap 550 2200
 
+    sleep 1;
     # Writes your text
     adb shell input text "$message"
 
+    sleep 1;
     # Clicks on send button
     adb shell input tap 1000 1450
+
+    sleep 1;
 }
 
 returnToHomeScreen() {
+    sleep 1;
     # Returns to home screen
     adb shell input keyevent KEYCODE_HOME
+    sleep 1;
 }
