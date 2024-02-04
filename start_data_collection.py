@@ -48,11 +48,6 @@ def main():
                 logging.error(f"Error posting message: {stderr}")
                 continue  # Skip this iteration
 
-            
-
-            # Update the flag for text sequence
-            prev_is_text_sequence = is_text_sequence
-
         except Exception as e:
             logging.exception(f"An unexpected error occurred: {e}")
 

@@ -9,6 +9,8 @@ openGeneralChatFromHomeScreen () {
     echo "Starting from home screen...";
     adb shell input keyevent KEYCODE_HOME ;
 
+    sleep 2;
+
     echo "Opening Slack...";
     adb shell am start -n com.Slack/slack.features.home.HomeActivity
     
@@ -45,14 +47,16 @@ postMessageToTheChat() {
     fi
 
     local message="${1// /%s}"  # Replaces all spaces with '%s'
+    formatted_channel="${message//\'/\'\\\'\'}"
 
     sleep 1;
+
     # Clicks on the text box
     adb shell input tap 550 2200
 
     sleep 1;
     # Writes your text
-    adb shell input text "$message"
+    adb shell input text "'$formatted_channel'"
 
     sleep 1;
     # Clicks on send button
