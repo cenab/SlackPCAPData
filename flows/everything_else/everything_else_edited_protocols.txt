@@ -1,0 +1,21 @@
+# Total packets: 820558 (820.56 K)
+# Total bytes: 304597852 (304.60 M)
+# L2/3 Protocol	                       Packets	                         Bytes	Description
+0x5254	                  61 [  0.01%]	               22017 [  0.01%]	
+0x5255	              400611 [ 48.82%]	            88886457 [ 29.18%]	
+0x5256	               10128 [  1.23%]	             3091316 [  1.01%]	
+0x8261	                  53 [  0.01%]	                9658 [  0.00%]	
+0xb200	              409705 [ 49.93%]	           212588404 [ 69.79%]	
+
+
+# Total IPv4 packets: 0 [0.00%]
+# Total IPv6 packets: 0 [0.00%]
+# L4 Protocol	                       Packets	                         Bytes	Description
+
+
+# Total TCP packets: 0 [0.00%]
+# Total TCP bytes: 0 [0.00%]
+
+
+# Total UDP packets: 0 [0.00%]
+# Total UDP bytes: 0 [0.00%]
