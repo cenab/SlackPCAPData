@@ -38,3 +38,14 @@
 | Post message with        |       | Update previous sequence|
 | post_message_to_the_chat()|<------| flag                    |
 +--------------------------+       +-------------------------+
+
+
+adb shell netstat -lt
+adb shell lsof | grep
+
+t2 -r pcap_edited/sanitized_pcap/slack_edited.pcapng -w .
+
+netstat
+wireshark filtering and saving
+tracewrangeler to override the linux cooking with ethernet
+generate the flow files with t2
