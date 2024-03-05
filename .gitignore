@@ -1,3 +1,8 @@
 # Ignore traceintel database
 traceintel.db
 tranalyzer2-0.9.0/
+pcap_edited/sanitized_pcap/everything_else_edited.pcap
+pcap_edited/sanitized_pcap/everything_else_edited.pcapng
+pcap_edited/sanitized_pcap/capture.pcap
+pcap_edited/capture.pcap
+pcap_edited/everything_else.pcap
