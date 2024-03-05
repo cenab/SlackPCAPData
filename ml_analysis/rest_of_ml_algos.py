@@ -12,8 +12,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, accuracy_score
 from sklearn.utils import shuffle
 
-
-file_path = '/Users/batu/Desktop/project_dal/android_pcap_data_collection_and_analysis/flows/slack/slack_edited_flows.txt'  # Update this path
+#filepaths to flows
+file_path_slack = '/Users/batu/Desktop/project_dal/android_pcap_data_collection_and_analysis/flows/slack_flows.txt'  # Update this path
 
 # Load the flow file
 def load_flow_file(file_path):
@@ -21,82 +21,115 @@ def load_flow_file(file_path):
     df["label"] = "slack"
     return df
 
-
-def drop_columns(df):
-    columns_to_drop = ["timeFirst", "timeLast", "flowInd", "macStat", "macPairs", "srcMac_dstMac_numP", "srcMacLbl_dstMacLbl", "srcMac", "dstMac", "srcPort", "hdrDesc", "duration"]
-    df = df.drop(columns_to_drop, axis=1)
+def only_stat_features(df):
+    #replace all the missing values with 0
+    df = df.fillna(0)
+    #drop timestamp and flow index
+    df = df.drop(["timeFirst","timeLast","flowInd"], axis=1)
+    #drop unnecessary columns
+    df = df.drop(["macStat",	"macPairs", "srcMac_dstMac_numP",	"srcMacLbl_dstMacLbl", "srcMac", "dstMac", "srcPort", "hdrDesc", "duration"], axis=1)
+    #drop categorical columns
+    nonnumeric_cols = []
+    for col in df.columns:
+        if df[col].dtype == "object":
+            nonnumeric_cols.append(col)
+            df[col] = df[col].astype("category").cat.codes
+    df = df.drop(nonnumeric_cols, axis=1)
     return df
 
-# Function for feature selection based on mutual information
-def feature_selection(df):
-    labels = df["label"]
-    inputs = df.drop("label", axis=1)
-    mutual_infos = mutual_info_classif(labels, inputs)
-    selected_features = X.columns[mutual_infos > 0.2]
-    return df[selected_features.union(['label'])]
+def shuffle_data(df):
+    df = shuffle(df)
+    return df
 
-df = load_flow_file(file_path)
-# Preprocess the DataFrame
-df_processed = drop_columns(df)
-df_selected_features = feature_selection(df_processed)
-df_shuffled = shuffle(df_selected_features).reset_index(drop=True)
+def process_data(file_path):
+    df = load_flow_file(file_path)
+    df = only_stat_features(df)
+    df = shuffle_data(df)
+    return df
 
-# Split into features and labels
-X = df_selected_features.drop('label', axis=1)
-y = df_selected_features['label']
+slack_IMA = process_data(file_path_slack)
+non_IMA = process_data(file_path_non_ima)
 
-# Split data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+print(slack_IMA)
+print(non_IMA)
 
-# Standardize features by removing the mean and scaling to unit variance
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
 
-# Nearest Neighbors
-knn = KNeighborsClassifier()
-knn.fit(X_train_scaled, y_train)
-y_pred_knn = knn.predict(X_test_scaled)
-print("KNN Accuracy:", accuracy_score(y_test, y_pred_knn))
 
-# Linear SVM
-svm = SVC(kernel='linear')
-svm.fit(X_train_scaled, y_train)
-y_pred_svm = svm.predict(X_test_scaled)
-print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm))
+# def drop_columns(df):
+#     columns_to_drop = ["timeFirst", "timeLast", "flowInd", "macStat", "macPairs", "srcMac_dstMac_numP", "srcMacLbl_dstMacLbl", "srcMac", "dstMac", "srcPort", "hdrDesc", "duration"]
+#     df = df.drop(columns_to_drop, axis=1)
+#     return df
 
-# Decision Tree
-dt = DecisionTreeClassifier()
-dt.fit(X_train, y_train)  # Not scaling for tree-based models
-y_pred_dt = dt.predict(X_test)
-print("Decision Tree Accuracy:", accuracy_score(y_test, y_pred_dt))
+# # Function for feature selection based on mutual information
+# def feature_selection(df):
+#     labels = df["label"]
+#     inputs = df.drop("label", axis=1)
+#     mutual_infos = mutual_info_classif(labels, inputs)
+#     selected_features = X.columns[mutual_infos > 0.2]
+#     return df[selected_features.union(['label'])]
 
-# Random Forest
-rf = RandomForestClassifier()
-rf.fit(X_train, y_train)  # Not scaling for tree-based models
-y_pred_rf = rf.predict(X_test)
-print("Random Forest Accuracy:", accuracy_score(y_test, y_pred_rf))
+# df = load_flow_file(file_path)
+# # Preprocess the DataFrame
+# df_processed = drop_columns(df)
+# df_selected_features = feature_selection(df_processed)
+# df_shuffled = shuffle(df_selected_features).reset_index(drop=True)
 
-# Multi-Layer Perceptron
-mlp = MLPClassifier()
-mlp.fit(X_train_scaled, y_train)
-y_pred_mlp = mlp.predict(X_test_scaled)
-print("MLP Accuracy:", accuracy_score(y_test, y_pred_mlp))
+# # Split into features and labels
+# X = df_selected_features.drop('label', axis=1)
+# y = df_selected_features['label']
 
-# Naive Bayes
-nb = GaussianNB()
-nb.fit(X_train_scaled, y_train)
-y_pred_nb = nb.predict(X_test_scaled)
-print("Naive Bayes Accuracy:", accuracy_score(y_test, y_pred_nb))
+# # Split data into training and testing sets
+# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Logistic Regression
-lr = LogisticRegression()
-lr.fit(X_train_scaled, y_train)
-y_pred_lr = lr.predict(X_test_scaled)
-print("Logistic Regression Accuracy:", accuracy_score(y_test, y_pred_lr))
+# # Standardize features by removing the mean and scaling to unit variance
+# scaler = StandardScaler()
+# X_train_scaled = scaler.fit_transform(X_train)
+# X_test_scaled = scaler.transform(X_test)
 
-# Gradient Boost
-gb = GradientBoostingClassifier()
-gb.fit(X_train, y_train)  # Not scaling for tree-based models
-y_pred_gb = gb.predict(X_test)
-print("Gradient Boost Accuracy:", accuracy_score(y_test, y_pred_gb))
+# # Nearest Neighbors
+# knn = KNeighborsClassifier()
+# knn.fit(X_train_scaled, y_train)
+# y_pred_knn = knn.predict(X_test_scaled)
+# print("KNN Accuracy:", accuracy_score(y_test, y_pred_knn))
+
+# # Linear SVM
+# svm = SVC(kernel='linear')
+# svm.fit(X_train_scaled, y_train)
+# y_pred_svm = svm.predict(X_test_scaled)
+# print("SVM Accuracy:", accuracy_score(y_test, y_pred_svm))
+
+# # Decision Tree
+# dt = DecisionTreeClassifier()
+# dt.fit(X_train, y_train)  # Not scaling for tree-based models
+# y_pred_dt = dt.predict(X_test)
+# print("Decision Tree Accuracy:", accuracy_score(y_test, y_pred_dt))
+
+# # Random Forest
+# rf = RandomForestClassifier()
+# rf.fit(X_train, y_train)  # Not scaling for tree-based models
+# y_pred_rf = rf.predict(X_test)
+# print("Random Forest Accuracy:", accuracy_score(y_test, y_pred_rf))
+
+# # Multi-Layer Perceptron
+# mlp = MLPClassifier()
+# mlp.fit(X_train_scaled, y_train)
+# y_pred_mlp = mlp.predict(X_test_scaled)
+# print("MLP Accuracy:", accuracy_score(y_test, y_pred_mlp))
+
+# # Naive Bayes
+# nb = GaussianNB()
+# nb.fit(X_train_scaled, y_train)
+# y_pred_nb = nb.predict(X_test_scaled)
+# print("Naive Bayes Accuracy:", accuracy_score(y_test, y_pred_nb))
+
+# # Logistic Regression
+# lr = LogisticRegression()
+# lr.fit(X_train_scaled, y_train)
+# y_pred_lr = lr.predict(X_test_scaled)
+# print("Logistic Regression Accuracy:", accuracy_score(y_test, y_pred_lr))
+
+# # Gradient Boost
+# gb = GradientBoostingClassifier()
+# gb.fit(X_train, y_train)  # Not scaling for tree-based models
+# y_pred_gb = gb.predict(X_test)
+# print("Gradient Boost Accuracy:", accuracy_score(y_test, y_pred_gb))

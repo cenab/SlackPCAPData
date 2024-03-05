@@ -1,9 +1,9 @@
-# Date: 1708417099.784742 sec (Tue 20 Feb 2024 01:18:19 MST)
+# Date: 1708858102.862591 sec (Sun 25 Feb 2024 13:48:22 +03)
 # Tranalyzer 0.9.0 (Anteater), Cobra
 # Core configuration: L2, IPv4, IPv6
 # SensorID: 666
-# PID: 35892
-# Command line: /Users/batu/Desktop/project_dal/android_pcap_data_collection_and_analysis/tranalyzer2-0.9.0/tranalyzer2/build/tranalyzer -r everything_else_edited.pcapng -w .
+# PID: 61672
+# Command line: /Users/batu/Desktop/project_dal/android_pcap_data_collection_and_analysis/tranalyzer2-0.9.0/tranalyzer2/build/tranalyzer -r capture.pcap -w .
 # HW info: Cenabs-MacBook-Pro.local;Darwin;23.1.0;Darwin Kernel Version 23.1.0: Mon Oct  9 21:28:12 PDT 2023; root:xnu-10002.41.9~6/RELEASE_ARM64_T8103;arm64
 # SW info: libpcap version 1.10.1
 #
