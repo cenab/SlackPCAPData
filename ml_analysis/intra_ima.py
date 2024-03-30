@@ -6,8 +6,70 @@ from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from sklearn.utils import shuffle
 from pathlib import Path
 import sys
+# config.py
 
-from config import cdic, cdic_names, apps, apps_fullname, plots_root
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import MinMaxScaler
+# Define classifiers dictionary with default settings from scikit-learn
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+from sklearn.pipeline import Pipeline
+from sklearn.naive_bayes import GaussianNB
+from sklearn.model_selection import GridSearchCV
+
+from sklearn.impute import SimpleImputer
+
+
+
+cdic = {
+    'NearestNeighbors': KNeighborsClassifier(n_neighbors=5, weights='distance', metric='euclidean'),
+    # 'LinearSVM': SVC(kernel='linear', C=1.0, class_weight='balanced'),
+    'DecisionTree': DecisionTreeClassifier(max_depth=None, min_samples_split=2, min_samples_leaf=1),
+    'RandomForest': RandomForestClassifier(n_estimators=100, max_depth=None, min_samples_split=2, min_samples_leaf=1, max_features='sqrt'),
+    'NeuralNetwork': None,
+    'NaiveBayes': None,
+    'LogisticRegression': None,
+    'GradientBoost': GradientBoostingClassifier(n_estimators=10, learning_rate=0.4, max_depth=3)
+
+}
+
+# Corresponding names for the classifiers in a human-readable format
+cdic_names = {
+    'NearestNeighbors': 'Nearest Neighbors',
+    # 'LinearSVM': 'Linear SVM',
+    'DecisionTree': 'Decision Tree',
+    'RandomForest': 'Random Forest',
+    'NeuralNetwork': 'Neural Network',
+    'NaiveBayes': 'Naive Bayes',
+    'LogisticRegression': 'Logistic Regression',
+    'GradientBoost': 'Gradient Boost'
+}
+
+# Updated list of applications you're analyzing, including 'IMA_Slack'
+apps = ['IMA_Whatsapp', 'IMA_Messenger', 'IMA_Telegram', 'IMA_Teams', 'IMA_Discord', 'IMA_Signal', 'IMA_Slack']
+
+# Full names for the applications for more readable output/reporting, with 'IMA_Slack' added
+apps_fullname = {
+    'IMA_Whatsapp': 'WhatsApp',
+    'IMA_Messenger': 'Messenger',
+    'IMA_Telegram': 'Telegram',
+    'IMA_Teams': 'Microsoft Teams',
+    'IMA_Discord': 'Discord',
+    'IMA_Signal': 'Signal',
+    'IMA_Slack': 'Slack',
+}
+
+# Root directory for plots and other output files
+plots_root = '/Users/batu/Desktop/project_dal/IMA_traffic_analysis'  # Ensure this path is correct for your system
 
 # Mapping app names to numeric identifiers
 app_to_num = {app: i for i, app in enumerate(apps)}
@@ -85,6 +147,51 @@ def tran_name(app, name):
 
 # Function
 
+def setPipelines(comb, cdic=cdic):
+     # Dynamically identify numerical and categorical features from 'comb'
+    numerical_features = comb.select_dtypes(include=['int64', 'float64']).columns.tolist()
+    categorical_features = comb.select_dtypes(include=['object', 'category']).columns.tolist()
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy='mean')),
+                ('scaler', StandardScaler())]), numerical_features),
+            ('cat', Pipeline(steps=[
+                ('imputer', SimpleImputer(strategy='most_frequent')),
+                ('onehot', OneHotEncoder(handle_unknown='ignore'))]), categorical_features),
+        ]
+    )
+
+    # Update the NeuralNetwork pipeline within the cdic dictionary
+    cdic['NeuralNetwork'] = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', MLPClassifier(hidden_layer_sizes=(1024, 512, 256), activation='tanh', alpha=0.0001, max_iter=1000))
+        ])
+
+    pipeline = Pipeline(steps=[
+        ('preprocessor', ColumnTransformer(
+            transformers=[
+                # You might consider commenting out or simplifying some of these preprocessing steps
+                ('num', Pipeline(steps=[
+                    ('imputer', SimpleImputer(strategy='mean')),
+                    ('scaler', StandardScaler())  # Consider removing the scaler to reduce preprocessing
+                ]), numerical_features),
+                ('cat', Pipeline(steps=[
+                    ('imputer', SimpleImputer(strategy='most_frequent')),
+                    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+                ]), categorical_features)
+            ]
+        )),  # First, apply the preprocessor
+        ('gnb', GaussianNB(var_smoothing=1e-14))     # Then, use the classifier with very low var_smoothing
+    ])
+
+    # Reduced cross-validation folds and use all CPUs available for GridSearchCV
+    cdic['NaiveBayes'] = GridSearchCV(pipeline, param_grid={'gnb__var_smoothing': [1e-14]}, cv=3, scoring='accuracy', n_jobs=-1)
+    cdic['LogisticRegression'] = Pipeline(steps=[('preprocessor', preprocessor), ('classifier', LogisticRegression(C=0.5, solver='saga', max_iter=500, class_weight='balanced'))])
+
+    return;
+
 # Function to process data for a given experiment
 def process(name, direction, features, cdic=cdic, cross_validateq=False):
     arr = []
@@ -99,6 +206,7 @@ def process(name, direction, features, cdic=cdic, cross_validateq=False):
     comb = comb.dropna(axis=1, how='all')
     comb = choose_features(comb, features, name)
     comb = shuffle(comb)
+
     arr = []
     f1_ranges = []
     accur_ranges = []
@@ -107,16 +215,21 @@ def process(name, direction, features, cdic=cdic, cross_validateq=False):
     for clf_name in cdic.keys():
         clf = cdic[clf_name]
         if cross_validateq == False:
-            xy_train = comb.groupby("label").sample(n=3179, random_state=1)
+            xy_train = comb.groupby("label").sample(n=20, random_state=1)
             x_train = xy_train.drop("label", axis=1)
             y_train = xy_train["label"]
+            setPipelines(x_train)
+            
             xy_test = comb.drop(xy_train.index)
             x_test = xy_test.drop("label", axis=1)
             y_test = xy_test['label']
             clf.fit(x_train, y_train)
-            y_predic = clf.predict(x_test)
+            # y_predic = clf.predict(x_test)
             train_predic = clf.predict(x_train)
-            arr.append([accuracy_score(y_test, y_predic), *score(y_test, y_predic, average='macro')[:3]])
+
+            precision, recall, f1, _ = precision_recall_fscore_support(y_train, train_predic, average='macro', zero_division=0)
+
+            arr.append([accuracy_score(y_train, train_predic), precision, recall, f1])
         else:
             f1s = []
             accurs = []
@@ -192,7 +305,7 @@ if __name__ == "__main__":
     feature_options = ["all", "categorical", "statistical", "custom_statistical"]
     if function == "process":
         for feature in feature_options:
-           process(name, "both", feature, cross_validateq=True)
+           process(name, "both", feature, cross_validateq=False)
     elif function == "count":
         build_count_table(name)
 

@@ -47,4 +47,4 @@ apps_fullname = {
 }
 
 # Root directory for plots and other output files
-plots_root = '/Users/batu/Desktop/project_dal/IMA_traffic_analysis'  # Ensure this path is correct for your system
+plots_root = '/Users/batu/Desktop/project_dal/android_pcap_data_collection_and_analysis'  # Ensure this path is correct for your system
