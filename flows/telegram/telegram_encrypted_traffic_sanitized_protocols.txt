@@ -1,0 +1,27 @@
+# Total packets: 18284 (18.28 K)
+# Total bytes: 5043551 (5.04 M)
+# L2/3 Protocol	                       Packets	                         Bytes	Description
+0x0800	               18284 [100.00%]	             5043551 [100.00%]	Internet Protocol version 4 (IPv4)
+
+
+# Total IPv4 packets: 18284 (18.28 K) [100.00%]
+# Total IPv6 packets: 0 [0.00%]
+# L4 Protocol	                       Packets	                         Bytes	Description
+  6	               18284 [100.00%]	             5043551 [100.00%]	Transmission Control Protocol (TCP)
+
+
+# Total TCP packets: 18284 (18.28 K) [100.00%]
+# Total TCP bytes: 5043551 (5.04 M) [100.00%]
+# TCP Port	                       Packets	                         Bytes	Description
+  443	               16979 [ 92.86%]	             4812870 [ 95.43%]	HTTP protocol over TLS/SSL
+ 5222	                 914 [  5.00%]	              156552 [  3.10%]	XMPP Client Connection
+33460	                  46 [  0.25%]	                6126 [  0.12%]	
+36004	                  15 [  0.08%]	                2050 [  0.04%]	
+36182	                 272 [  1.49%]	               53020 [  1.05%]	
+46880	                  33 [  0.18%]	                9683 [  0.19%]	
+48688	                   8 [  0.04%]	                1156 [  0.02%]	
+49578	                  17 [  0.09%]	                2094 [  0.04%]	
+
+
+# Total UDP packets: 0 [0.00%]
+# Total UDP bytes: 0 [0.00%]

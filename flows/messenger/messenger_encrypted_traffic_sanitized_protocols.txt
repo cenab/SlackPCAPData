@@ -1,0 +1,20 @@
+# Total packets: 13382 (13.38 K)
+# Total bytes: 2808953 (2.81 M)
+# L2/3 Protocol	                       Packets	                         Bytes	Description
+0x0800	               13382 [100.00%]	             2808953 [100.00%]	Internet Protocol version 4 (IPv4)
+
+
+# Total IPv4 packets: 13382 (13.38 K) [100.00%]
+# Total IPv6 packets: 0 [0.00%]
+# L4 Protocol	                       Packets	                         Bytes	Description
+  6	               13382 [100.00%]	             2808953 [100.00%]	Transmission Control Protocol (TCP)
+
+
+# Total TCP packets: 13382 (13.38 K) [100.00%]
+# Total TCP bytes: 2808953 (2.81 M) [100.00%]
+# TCP Port	                       Packets	                         Bytes	Description
+  443	               13382 [100.00%]	             2808953 [100.00%]	HTTP protocol over TLS/SSL
+
+
+# Total UDP packets: 0 [0.00%]
+# Total UDP bytes: 0 [0.00%]

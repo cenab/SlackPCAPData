@@ -6,3 +6,9 @@ pcap_edited/sanitized_pcap/everything_else_edited.pcapng
 pcap_edited/sanitized_pcap/capture.pcap
 pcap_edited/capture.pcap
 pcap_edited/everything_else.pcap
+discord_encrypted_traffic_sanitized.pcap
+messenger_encrypted_traffic_sanitized.pcap
+signal_encrypted_traffic_sanitized.pcap
+teams_encrypted_traffic_sanitized.pcap
+telegram_encrypted_traffic_sanitized.pcap
+whatsapp_encrypted_traffic_sanitized.pcap

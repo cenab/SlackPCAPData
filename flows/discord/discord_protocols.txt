@@ -1,0 +1,22 @@
+# Total packets: 8894 (8.89 K)
+# Total bytes: 2440460 (2.44 M)
+# L2/3 Protocol	                       Packets	                         Bytes	Description
+0x0000	                   1 [  0.01%]	               10652 [  0.44%]	Null LSAP
+0x0800	                8892 [ 99.98%]	             2429610 [ 99.56%]	Internet Protocol version 4 (IPv4)
+0x27e0	                   1 [  0.01%]	                 198 [  0.01%]	
+
+
+# Total IPv4 packets: 8892 (8.89 K) [99.98%]
+# Total IPv6 packets: 0 [0.00%]
+# L4 Protocol	                       Packets	                         Bytes	Description
+  6	                8892 [ 99.98%]	             2429610 [ 99.56%]	Transmission Control Protocol (TCP)
+
+
+# Total TCP packets: 8892 (8.89 K) [99.98%]
+# Total TCP bytes: 2429610 (2.43 M) [99.56%]
+# TCP Port	                       Packets	                         Bytes	Description
+  443	                8892 [100.00%]	             2429610 [100.00%]	HTTP protocol over TLS/SSL
+
+
+# Total UDP packets: 0 [0.00%]
+# Total UDP bytes: 0 [0.00%]
